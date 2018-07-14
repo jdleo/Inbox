@@ -6,6 +6,7 @@ const web3 = new Web3(provider);
 const {interface, bytecode} = require('../compile');
 
 const test_initial_message = 'hello, world!';
+const test_new_message = 'bye, world!';
 
 let accounts;
 let inbox;
@@ -26,8 +27,14 @@ describe('Inbox Contract', () => {
     assert.ok(inbox.options.address);
   });
 
-  it('default message is set on deployment', async () => {
+  it('sets default message on deployment', async () => {
     const message = await inbox.methods.message().call();
     assert.equal(message, test_initial_message);
+  });
+
+  it('sets new message', async () => {
+    await inbox.methods.setMessage(test_new_message).send({from: accounts[0]});
+    const message = await inbox.methods.message().call();
+    assert.equal(message, test_new_message);
   });
 });
